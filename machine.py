@@ -140,3 +140,4 @@ def spotify_create_playlist(answer_date='1998-11-21', songs_and_artists=None, op
     playlist_id = playlist["id"]
     sp.playlist_add_items(playlist_id=playlist_id, items=spotify_uris)
     print(f"\nDone.\n\033[1;32mPlaylist created successfully.\033[m")
+
