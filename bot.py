@@ -36,27 +36,13 @@ def welcome_message():
 
 
 
-        Type a valid date in time and we'll create you a Spotify playlist with the top 100 songs
-        played that day in the world.                                 
-        Let's go for a ride.
+        Type a valid date in time and we'll create you a Spotify playlist with the top 50 songs
+        played that day in the world.
+                                         
+        Let's go for a musical ride.
     \033[m
     '''
     print(msg)
-
-
-def log_into_spotify_with_credentials():
-    scope = 'playlist-modify-private'
-    sp = spotipy.Spotify(
-        client_credentials_manager=SpotifyOAuth(
-            scope=scope,
-            client_id=SPOTIPY_CLIENT_ID,
-            client_secret=SPOTIPY_CLIENT_SECRET,
-            redirect_uri=SPOTIPY_REDIRECT_URI,
-            show_dialog=True,
-            cache_path="token.txt")
-    )
-    user_id = sp.current_user()['id']
-    print(user_id)
 
 
 def bye_message():
@@ -94,10 +80,48 @@ def grab_music_titles(response):
     containers = soup.find_all('div', {'class': 'o-chart-results-list-row-container'})
     if containers is None:
         raise Exception("Error. Please verify if the tags for each container exist in the response.")
-    title_tags = [container.find('h3', {'id': 'title-of-a-story'}) for container in containers]
-    title_names = [tag.text.strip() for tag in title_tags]
+    tags = [container.find('h3', {'id': 'title-of-a-story'}) for container in containers]
+    title_tags = tags.copy()[:50]
+    del tags
+    title_names = [tag.getText().strip() for tag in title_tags]
     index_number = 1
     for title in title_names:
         print(f'{index_number}. {title}')
         index_number += 1
     return title_names
+
+
+def spotify_create_playlist(answer_date='1998-09-28', song_titles=None):
+    playlist_name = f"Billboard top 50 songs ({answer_date})"
+
+    scope = 'playlist-modify-private'
+    sp = spotipy.Spotify(
+        client_credentials_manager=SpotifyOAuth(
+            scope=scope,
+            client_id=SPOTIPY_CLIENT_ID,
+            client_secret=SPOTIPY_CLIENT_SECRET,
+            redirect_uri=SPOTIPY_REDIRECT_URI,
+            show_dialog=True,
+            cache_path="token.txt")
+    )
+    user_id = sp.current_user()['id']
+    print(f"We're at Spotify. \nThis is your current user ID: {user_id}")
+
+    spotify_uris = []
+    year = answer_date.split('-')[0]
+    for song_title in song_titles:
+        spotify_results = sp.search(q=f"track:{song_title} year:{year}", type="track")
+        try:
+            uri = spotify_results['tracks']['items'][0]['uri']
+            spotify_uris.append(uri)
+        except:
+            print(f"\033[31mWe're skipping song '{song_title.upper()}' because we were unable to find it. Sorry.\033[m")
+
+    playlist = sp.user_playlist_create(user=user_id,
+                                       name=playlist_name,
+                                       public=False,
+                                       description='''Created by "The Music Time Machine" developed by
+                                       Barbara Calderon (github.com/barbaracalderon) in january, 2023.''')
+    playlist_id = playlist["id"]
+    print(playlist_id)
+    sp.playlist_add_items(playlist_id=playlist_id, items=spotify_uris)
