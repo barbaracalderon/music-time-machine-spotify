@@ -12,7 +12,7 @@ while True:
     if answer_playlist == 'N':
         bye_message()
         break
-    print("Great! Let's do this :)")
+    print(f"\n\033[1;32mGreat! Let's do this! :)\n\033[m")
     answer_date = input("Please, type a date of your choice in the following format (YYYY-MM-DD): ")
     while '-' not in answer_date:
         print('\033[31mError. Invalid format.\033[m')
@@ -22,12 +22,12 @@ while True:
     if invalid_format:
         print('''\033[31mAgain. This is not a valid date format...
                 We're shutting down.\033[m''')
-    print("Awesome! We're reaching the Billboard Charts for that date now...")
+    print("\nAwesome!\nWe're reaching the Billboard Charts for that date now...")
     response = send_request_to_billboard(answer_date)
-    song_titles = grab_music_titles(response)
-    if len(song_titles) == 0:
+    songs_and_artists = grab_music_titles_and_artist_names(response)
+    if len(songs_and_artists) == 0:
         raise Exception("Error. The list is empty. Please verify.")
-    spotify_create_playlist(answer_date=answer_date, song_titles=song_titles)
-    print("All done!\nBe sure to check your Spotify account. :)")
+    spotify_create_playlist(answer_date=answer_date, songs_and_artists=songs_and_artists)
+    print(f"\033[1;32mBe sure to check your Spotify account. ;)\n\033[m")
 
 print('\033[31mExiting...\033[m')

@@ -10,8 +10,8 @@ SPOTIPY_REDIRECT_URI = os.environ.get('SPOTIPY_REDIRECT_URI')
 
 
 def welcome_message():
-    msg = '''\033[33m
-        WELCOME TO
+    msg = '''\033[1;33;40m
+        WELCOME TO...
 
                    .___________. __    __   _______                                               
                    |           ||  |  |  | |   ____|                                              
@@ -40,8 +40,8 @@ def welcome_message():
         played that day in the world.
                                          
         Let's go for a musical ride.
-    \033[m
-    '''
+        
+\033[m'''
     print(msg)
 
 
@@ -75,23 +75,24 @@ def send_request_to_billboard(date):
     return response
 
 
-def grab_music_titles(response):
+def grab_music_titles_and_artist_names(response):
     soup = BeautifulSoup(response.content, 'lxml')
     containers = soup.find_all('div', {'class': 'o-chart-results-list-row-container'})
     if containers is None:
         raise Exception("Error. Please verify if the tags for each container exist in the response.")
-    tags = [container.find('h3', {'id': 'title-of-a-story'}) for container in containers]
-    title_tags = tags.copy()[:50]
-    del tags
-    title_names = [tag.getText().strip() for tag in title_tags]
-    index_number = 1
-    for title in title_names:
-        print(f'{index_number}. {title}')
-        index_number += 1
-    return title_names
+    pairs_info = []
+    for i, container in enumerate(containers):
+        i += 1
+        title_tag = container.find('h3', {'id': 'title-of-a-story'})
+        artist_tag = title_tag.find_next_sibling()
+        song_title = title_tag.getText().strip()
+        artist_name = artist_tag.getText().strip()
+        pairs_info.append((song_title, artist_name))
+        print(f'{i}. {song_title} - ({artist_name})')
+    return pairs_info
 
 
-def spotify_create_playlist(answer_date='1998-09-28', song_titles=None):
+def spotify_create_playlist(answer_date='1998-11-21', songs_and_artists=None):
     playlist_name = f"Billboard top 50 songs ({answer_date})"
 
     scope = 'playlist-modify-private'
@@ -105,17 +106,18 @@ def spotify_create_playlist(answer_date='1998-09-28', song_titles=None):
             cache_path="token.txt")
     )
     user_id = sp.current_user()['id']
-    print(f"We're at Spotify. \nThis is your current user ID: {user_id}")
+    print(f"\n\033[1;32mWe're at Spotify.\033[m\nLet's start the creation of your playlist...")
 
     spotify_uris = []
     year = answer_date.split('-')[0]
-    for song_title in song_titles:
-        spotify_results = sp.search(q=f"track:{song_title} year:{year}", type="track")
+    for song_title, artist_name in songs_and_artists:
+        spotify_results = sp.search(q=f"track:{song_title} year:{year} artist:{artist_name}", type="track")
         try:
             uri = spotify_results['tracks']['items'][0]['uri']
             spotify_uris.append(uri)
         except:
-            print(f"\033[31mWe're skipping song '{song_title.upper()}' because we were unable to find it. Sorry.\033[m")
+            print(f"\033[31mWe're skipping song \033[1;37;40m'{song_title.upper()}'\033[0m \033[31mbecause "
+                  f"we were unable to find it. Sorry.\033[m")
 
     playlist = sp.user_playlist_create(user=user_id,
                                        name=playlist_name,
@@ -123,5 +125,5 @@ def spotify_create_playlist(answer_date='1998-09-28', song_titles=None):
                                        description='''Created by "The Music Time Machine" developed by
                                        Barbara Calderon (github.com/barbaracalderon) in january, 2023.''')
     playlist_id = playlist["id"]
-    print(playlist_id)
     sp.playlist_add_items(playlist_id=playlist_id, items=spotify_uris)
+    print(f"Done.\n\033[1;32mPlaylist created successfully.\033[m")
