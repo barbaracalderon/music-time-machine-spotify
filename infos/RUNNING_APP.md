@@ -3,7 +3,6 @@
 ### When you run `main.py`, you should see this
 
 ![welcome image and first user_inputs](app_01.png)
-
 ![creation of spotify playlist](app_02.png)
 
 ## The playlist created
