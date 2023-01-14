@@ -5,7 +5,7 @@ This is my solution to the "Music Time Machine" challenge from _Dr. Angela Yu's 
 App Brewery.
 
 
-![a screenshot of the output welcome message to my version of the "music time machine" challenge](mtm_00.png)
+![a screenshot of the output welcome message to my version of the "music time machine" challenge](welcome.png)
 
 ## What do I need to run this?
 
@@ -26,8 +26,8 @@ App Brewery.
 ## More information at
 
 - [How to create a Spotify App and its credentials](/infos/CREDENTIALS.md)
-- [How to set your ENVIRONMENT VARIABLES]()
-- [Screenshots of the App running]()
+- [How to set your ENVIRONMENT VARIABLES](/infos/ENV_VARIABLES.md)
+- [Screenshots of the App running](/infos/RUNNING_APP.md)
 
 Enjoy! ;)
 
