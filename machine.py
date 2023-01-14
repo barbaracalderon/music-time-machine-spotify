@@ -37,13 +37,13 @@ def welcome_message():
 
 
         Type a valid date in time and we'll create you a Spotify playlist with the top songs 
-        playing in that moment in the world.
+        playing in the world in that moment.
         
         
         OPTIONS:
         [1] - I only want the songs by the original performers (- less songs)
         [2] - I don't care who performs it (+ more songs)
-        ------------------------------------------------------------------
+        ----------------------------------------------------------------------
         
         
         Let's go for a musical ride. 
@@ -53,7 +53,7 @@ def welcome_message():
 
 
 def bye_message():
-    print('\033[33mTime to take off. See you next time!\033[m')
+    print('\033[33m\nThanks for trying us out!\nTime to take off now.\nSee you next time!\033[m')
 
 
 def is_date_format_invalid(answer_date_split):
@@ -87,22 +87,23 @@ def grab_music_titles_and_artist_names(response):
     containers = soup.find_all('div', {'class': 'o-chart-results-list-row-container'})
     if containers is None:
         raise Exception("Error. Please verify if the tags for each container exist in the response.")
-    pairs_info = []
+    songs_and_artists = []
     for i, container in enumerate(containers):
         i += 1
         title_tag = container.find('h3', {'id': 'title-of-a-story'})
         artist_tag = title_tag.find_next_sibling()
         song_title = title_tag.text.strip()
         artist_name = artist_tag.text.strip()
-        pairs_info.append((song_title, artist_name))
-    return pairs_info
+        songs_and_artists.append((song_title, artist_name))
+        # print(f'{i}) {song_title.upper()} - {artist_name}')
+    return songs_and_artists
 
 
 def spotify_create_playlist(answer_date='1998-11-21', songs_and_artists=None, option='1'):
     playlist_name = f"({answer_date}) Billboard top charts"
     year = answer_date.split('-')[0]
-
     scope = 'playlist-modify-private'
+
     sp = spotipy.Spotify(
         client_credentials_manager=SpotifyOAuth(
             scope=scope,
@@ -113,6 +114,7 @@ def spotify_create_playlist(answer_date='1998-11-21', songs_and_artists=None, op
             cache_path="token.txt")
     )
     user_id = sp.current_user()['id']
+
     print(f"\n\033[1;32mWe're at Spotify.\033[m\nLet's start the creation of your playlist...\n")
 
     spotify_uris = []
@@ -137,4 +139,4 @@ def spotify_create_playlist(answer_date='1998-11-21', songs_and_artists=None, op
                                        Barbara Calderon (github.com/barbaracalderon) in january, 2023.''')
     playlist_id = playlist["id"]
     sp.playlist_add_items(playlist_id=playlist_id, items=spotify_uris)
-    print(f"Done.\n\033[1;32mPlaylist created successfully.\033[m")
+    print(f"\nDone.\n\033[1;32mPlaylist created successfully.\033[m")

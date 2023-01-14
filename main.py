@@ -1,4 +1,4 @@
-from bot import *
+from machine import *
 
 
 welcome_message()
@@ -33,5 +33,4 @@ while True:
         raise Exception("Error. The list is empty. Please verify.")
     spotify_create_playlist(answer_date=answer_date, songs_and_artists=songs_and_artists, option=option)
     print(f"\033[1;32mBe sure to check your Spotify account. ;)\n\033[m")
-
 print('\033[31mExiting...\033[m')
