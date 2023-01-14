@@ -4,8 +4,6 @@ _This README.md file is in English and Portuguese. // Esse arquivo README.md est
 This is my solution to the "Music Time Machine" challenge from _Dr. Angela Yu's Python Bootcamp_, from the London 
 App Brewery.
 
-### ( 🚧 - README.md file... is under Construction -  🚧)
-
 
 ![a screenshot of the output welcome message to my version of the "music time machine" challenge](mtm_00.png)
 
@@ -27,7 +25,7 @@ App Brewery.
 
 ## More information at
 
-- [How to create a Spotify App and its credentials]()
+- [How to create a Spotify App and its credentials](/infos/CREDENTIALS.md)
 - [How to set your ENVIRONMENT VARIABLES]()
 - [Screenshots of the App running]()
 
