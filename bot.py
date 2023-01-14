@@ -78,7 +78,7 @@ def send_request_to_billboard(date):
     response = requests.get(url=url_billboard, allow_redirects=False)
     if response.status_code != 200:
         raise Exception(f'Error. We expeected a status_code value of 200, but we got {response.status_code} instead.'
-                        f'.\nPlease, be sure to check if the URL is active.')
+                        f'.\nPlease, be sure to check if the URL is active and the date provided is valid.')
     return response
 
 
