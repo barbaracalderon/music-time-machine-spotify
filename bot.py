@@ -36,10 +36,17 @@ def welcome_message():
 
 
 
-        Type a valid date in time and we'll create you a Spotify playlist with the top 50 songs
-        played that day in the world.
-                                         
-        Let's go for a musical ride.
+        Type a valid date in time and we'll create you a Spotify playlist with the top songs 
+        playing in that moment in the world.
+        
+        
+        OPTIONS:
+        [1] - I only want the songs by the original performers (- less songs)
+        [2] - I don't care who performs it (+ more songs)
+        ------------------------------------------------------------------
+        
+        
+        Let's go for a musical ride. 
         
 \033[m'''
     print(msg)
@@ -85,15 +92,15 @@ def grab_music_titles_and_artist_names(response):
         i += 1
         title_tag = container.find('h3', {'id': 'title-of-a-story'})
         artist_tag = title_tag.find_next_sibling()
-        song_title = title_tag.getText().strip()
-        artist_name = artist_tag.getText().strip()
+        song_title = title_tag.text.strip()
+        artist_name = artist_tag.text.strip()
         pairs_info.append((song_title, artist_name))
-        print(f'{i}. {song_title} - ({artist_name})')
     return pairs_info
 
 
-def spotify_create_playlist(answer_date='1998-11-21', songs_and_artists=None):
-    playlist_name = f"Billboard top 50 songs ({answer_date})"
+def spotify_create_playlist(answer_date='1998-11-21', songs_and_artists=None, option='1'):
+    playlist_name = f"({answer_date}) Billboard top charts"
+    year = answer_date.split('-')[0]
 
     scope = 'playlist-modify-private'
     sp = spotipy.Spotify(
@@ -106,12 +113,14 @@ def spotify_create_playlist(answer_date='1998-11-21', songs_and_artists=None):
             cache_path="token.txt")
     )
     user_id = sp.current_user()['id']
-    print(f"\n\033[1;32mWe're at Spotify.\033[m\nLet's start the creation of your playlist...")
+    print(f"\n\033[1;32mWe're at Spotify.\033[m\nLet's start the creation of your playlist...\n")
 
     spotify_uris = []
-    year = answer_date.split('-')[0]
     for song_title, artist_name in songs_and_artists:
-        spotify_results = sp.search(q=f"track:{song_title} year:{year} artist:{artist_name}", type="track")
+        if option == '1':
+            spotify_results = sp.search(q=f"track:{song_title} artist:{artist_name}", type="track")
+        else:
+            spotify_results = sp.search(q=f"track:{song_title} year:{year}", type="track")
         try:
             uri = spotify_results['tracks']['items'][0]['uri']
             spotify_uris.append(uri)
@@ -119,6 +128,8 @@ def spotify_create_playlist(answer_date='1998-11-21', songs_and_artists=None):
             print(f"\033[31mWe're skipping song \033[1;37;40m'{song_title.upper()}'\033[0m \033[31mbecause "
                   f"we were unable to find it. Sorry.\033[m")
 
+    if option == '1':
+        playlist_name = f"({answer_date}) Billboard top charts (original performers)"
     playlist = sp.user_playlist_create(user=user_id,
                                        name=playlist_name,
                                        public=False,
