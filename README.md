@@ -1,7 +1,7 @@
-_This README.md file is in English and Portuguese. // Esse arquivo README.md está em Inglês e Português._
+_This README.md file is in English and Portuguese (soon). // Esse arquivo README.md está em Inglês e Português (em breve)._
 # EN: The Music Time Machine Project
 
-This is my solution to the "Music Time Machine" challenge from _Dr. Angela Yu's Python Bootcamp_, from the London 
+This is my solution and own version to the "Music Time Machine" **challenge** from _Dr. Angela Yu's Python Bootcamp_, from the London 
 App Brewery.
 
 
